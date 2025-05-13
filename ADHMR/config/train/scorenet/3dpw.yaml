@@ -1,0 +1,209 @@
+dataset:
+    set_list:
+    - root: 'data/h36m/'
+      test_set: 'Sample_20_test_Human36M_smpl'
+      train_set: 'Sample_5_train_Human36M_smpl_leaf_twist'
+    - root: 'data/coco/'
+      train_set: 'coco'
+    - root: 'data/3dhp/'
+      train_set: 'train_v2'
+    - root: 'data/pw3d/'
+      train_set: '3DPW_train.json'
+      test_set: '3DPW_test.json'
+    - root: 'data/mpii/'
+      train_set: 'process_db_mpii.json'
+    - root: 'data/up3d/'
+      train_set: 'process_db_up3d.json'
+    - root: 'data/surreal/'
+      train_set: 'train_surreal.json'
+    use_3d: [0,3]
+    use_29: [0,3]
+    use_twist: [0,3]
+    use_beta: [0,3]
+    use_score: [0,3]
+    protocol: 2 
+    train_dataset: 'MixDataset'
+    test_dataset: ['h36m', '3dpw']
+    flip: true
+    rot_factor: 30
+    scale_factor: 0.3
+    num_joints_half_body: 8
+    prob_half_body: -1
+    color_factor: 0.2
+    occlusion: true
+    mean_std_file: 'h36m_zero_center_gt.pkl'
+    preset: 'simple_smpl_3d'
+    partition:
+    - 0.3
+    - 0.15
+    - 0.15
+    - 0.2
+    - 0.1
+    - 0.1
+    - 0
+    bbox_3d_shape:
+    - 2000
+    - 2000
+    - 2000
+    part: 0
+    sigma: 3
+    depth_dim: 64
+    workers: 8
+
+training:
+    batch_size: 80
+    n_epochs: 10
+    validation_freq: 1
+    loss_freq: 100
+    world_size: 8
+    resume_training: False
+    resume_ckpt: '' 
+    finetune: False
+    save_best: 10
+    scorenet:
+        train: True
+        load_weight: True
+        gen_path: 
+        - 'experiment/hyponet/h36m/ckpt/ckpt_epoch_8.pth'
+        - 'experiment/hyponet/h36m/ckpt/ckpt_epoch_15.pth'
+        - 'experiment/hyponet/h36m/ckpt/best_h36m.pth'
+        - 'experiment/hyponet/3dpw/ckpt/best_pw3d.pth'
+        test_path: 'experiment/hyponet/3dpw/ckpt/best_pw3d.pth'
+        cases:
+        - 3
+        - 4
+        - 4
+        - 4
+        topk: 5
+
+
+loss:
+    hyponet:
+        weight_shape: 1
+        weight_diff: 1
+        weight_2d: 20
+    scorenet:
+        eps: 0.00000000000000000000000001
+        weight_pve: 1
+        weight_mcam: 1
+        weight_2d: 1
+        sigma: 5
+    
+diffusion:
+    beta_schedule: 'linear'
+    beta_start: 0.0001
+    beta_end: 0.02
+    num_diffusion_timesteps: 1000
+    skip_type: 'uniform'
+    timesteps: 3
+    eta: 0
+    scale: 50 
+
+sampling:
+    batch_size: 160
+    zero: True
+    eval_14: True
+    ckpt_id: 20
+    interval: 10
+    multihypo_n: 100
+
+optim:
+    weight_decay: 0.000
+    optimizer: "Adam"
+    lr_hrnet: [0.0001,0.001]
+    lr_factor_hrnet: 0.5
+    lr_step_hrnet: [5]
+    lr_factor_model: 0.5
+    lr_step_model: [5]
+    lr_model: 0.0005
+    beta1: 0.9
+    amsgrad: false
+    grad_clip: 1.0
+    eps: 0.000000000000000000000001
+
+scorenet:
+    joint_ch: 256
+    knn: 2
+    atten_knn: [7,6,5,4,3,1]
+    pretrained: ''
+    heads: 8
+    ema_rate: 0.9999
+    num_blocks: 6
+
+hyponet:
+    num_joints: 29
+    num_twists: 23
+    num_blocks: 6
+    heads: 8
+    joint_ch: 256
+    temb_ch: 128
+    knn: 2
+    atten_knn: [7,6,5,4,3,1]
+    ema_rate: 0.9999
+    pretrained: ''
+    norm: 'scale_t'
+
+hrnet: 
+    local_ch: 256
+    condition_ch: 512
+    image_size: [256, 256]
+    heatmap_size: [64, 64]
+    pretrained: 'model/pretrained/pose_hrnet_w48_384x288.pth'
+    integral:
+        use_softmax: true
+        alpha: 15
+        use_pow: false
+        pow_temp: 1
+    EXTRA:
+        PRETRAINED_LAYERS:
+            - 'conv1'
+            - 'bn1'
+            - 'conv2'
+            - 'bn2'
+            - 'layer1'
+            - 'transition1'
+            - 'stage2'
+            - 'transition2'
+            - 'stage3'
+            - 'transition3'
+            - 'stage4'
+        FINAL_CONV_KERNEL: 1
+        STAGE2:
+            NUM_MODULES: 1
+            NUM_BRANCHES: 2
+            BLOCK: BASIC
+            NUM_BLOCKS:
+            - 4
+            - 4
+            NUM_CHANNELS:
+            - 48
+            - 96
+            FUSE_METHOD: SUM
+        STAGE3:
+            NUM_MODULES: 4
+            NUM_BRANCHES: 3
+            BLOCK: BASIC
+            NUM_BLOCKS:
+            - 4
+            - 4
+            - 4
+            NUM_CHANNELS:
+            - 48
+            - 96
+            - 192
+            FUSE_METHOD: SUM
+        STAGE4:
+            NUM_MODULES: 3
+            NUM_BRANCHES: 4
+            BLOCK: BASIC
+            NUM_BLOCKS:
+            - 4
+            - 4
+            - 4
+            - 4
+            NUM_CHANNELS:
+            - 48
+            - 96
+            - 192
+            - 384
+            FUSE_METHOD: SUM

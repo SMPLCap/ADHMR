@@ -1,0 +1,188 @@
+inference:
+    img_dir: 'input'
+    out_dir: 'output/'
+    det_dir: ''
+    det_bs: 80
+    render: True
+    write_obj: False
+    draw_num: 1
+    optim_step: 200
+    optim_lr: 100
+    step_size: 40
+    gamma: 0.2
+    input_type: 'video'
+
+dataset:
+    set_list:
+    - root: 'data/h36m/'
+      test_set: 'Sample_20_test_Human36M_smpl'
+      train_set: 'Sample_5_train_Human36M_smpl_leaf_twist'
+    - root: 'data/coco/'
+      train_set: 'coco'
+    - root: 'data/3dhp/'
+      train_set: 'train_v2'
+    - root: 'data/pw3d/'
+      train_set: '3DPW_train.json'
+      test_set: '3DPW_test.json'
+    - root: 'data/mpii/'
+      train_set: 'process_db_mpii.json'
+    - root: 'data/up3d/'
+      train_set: 'process_db_up3d.json'
+    - root: 'data/surreal/'
+      train_set: 'train_surreal.json'
+    use_3d: [0,3]
+    use_29: [0,3]
+    use_twist: [0,3]
+    use_beta: [0,3]
+    use_score: [0,1,3,4]
+    protocol: 2 
+    train_dataset: 'MixDataset'
+    test_dataset: ['h36m', '3dpw']
+    flip: true
+    rot_factor: 30
+    scale_factor: 0.3
+    num_joints_half_body: 8
+    prob_half_body: -1
+    color_factor: 0.2
+    occlusion: true
+    mean_std_file: 'h36m_zero_center_gt.pkl'
+    preset: 'simple_smpl_3d'
+    partition:
+    - 0.35
+    - 0.2
+    - 0.15
+    - 0.2
+    - 0.05
+    - 0.05
+    - 0
+    bbox_3d_shape:
+    - 2000
+    - 2000
+    - 2000
+    part: 0
+    sigma: 3
+    depth_dim: 64
+    workers: 8
+
+training:
+    batch_size: 80
+    n_epochs: 20
+    validation_freq: 1
+    loss_freq: 100
+    world_size: 8
+    resume_training: False
+    resume_ckpt: '' 
+    finetune: False
+    save_best: 10
+    scorenet:
+        train: False
+        topk: 1
+        load_weight: True
+        gen_path:
+        - 'experiment/hyponet/in-the-wild/ckpt/ckpt.pth'
+        test_path: 'experiment/hyponet/in-the-wild/ckpt/ckpt.pth'
+
+diffusion:
+    beta_schedule: 'linear'
+    beta_start: 0.0001
+    beta_end: 0.02
+    num_diffusion_timesteps: 1000
+    skip_type: 'uniform'
+    timesteps: 3
+    eta: 0
+    scale: 50 
+
+sampling:
+    batch_size: 160
+    zero: True
+    eval_14: True
+    interval: 10
+    ckpt: 'experiment/scorenet/3dpw/ckpt/ckpt.pth'
+    multihypo_n: 1
+
+scorenet:
+    joint_ch: 256
+    knn: 2
+    atten_knn: [7,6,5,4,3,1]
+    pretrained: ''
+    heads: 8
+    ema_rate: 0.9999
+    num_blocks: 6
+
+hyponet:
+    num_joints: 29
+    num_twists: 23
+    num_blocks: 6
+    heads: 8
+    joint_ch: 256
+    temb_ch: 128
+    knn: 2
+    atten_knn: [7,6,5,4,3,1]
+    ema_rate: 0.9999
+    pretrained: ''
+    norm: 'scale_t'
+
+hrnet: 
+    local_ch: 256
+    condition_ch: 512
+    image_size: [256, 256]
+    heatmap_size: [64, 64]
+    pretrained: 'model/pretrained/pose_hrnet_w48_384x288.pth'
+    integral:
+        use_softmax: true
+        alpha: 15
+        use_pow: false
+        pow_temp: 1
+    EXTRA:
+        PRETRAINED_LAYERS:
+            - 'conv1'
+            - 'bn1'
+            - 'conv2'
+            - 'bn2'
+            - 'layer1'
+            - 'transition1'
+            - 'stage2'
+            - 'transition2'
+            - 'stage3'
+            - 'transition3'
+            - 'stage4'
+        FINAL_CONV_KERNEL: 1
+        STAGE2:
+            NUM_MODULES: 1
+            NUM_BRANCHES: 2
+            BLOCK: BASIC
+            NUM_BLOCKS:
+            - 4
+            - 4
+            NUM_CHANNELS:
+            - 48
+            - 96
+            FUSE_METHOD: SUM
+        STAGE3:
+            NUM_MODULES: 4
+            NUM_BRANCHES: 3
+            BLOCK: BASIC
+            NUM_BLOCKS:
+            - 4
+            - 4
+            - 4
+            NUM_CHANNELS:
+            - 48
+            - 96
+            - 192
+            FUSE_METHOD: SUM
+        STAGE4:
+            NUM_MODULES: 3
+            NUM_BRANCHES: 4
+            BLOCK: BASIC
+            NUM_BLOCKS:
+            - 4
+            - 4
+            - 4
+            - 4
+            NUM_CHANNELS:
+            - 48
+            - 96
+            - 192
+            - 384
+            FUSE_METHOD: SUM
