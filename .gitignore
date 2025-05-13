@@ -17,7 +17,7 @@ HMR-Scorer/data/SHAPY/mesh-mesh-intersection/mesh_mesh_intersect_cuda.cpython-38
 *.pyc
 *.npy
 *.jpg
-*.png
+# *.png
 *.zip
 *.obj
 *.deb
