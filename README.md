@@ -56,7 +56,7 @@ cd -
   - [Human3.6M](http://vision.imar.ro/human3.6m/description.php)     
   - [HI4D](https://yifeiyin04.github.io/Hi4D/)        
   - [BEDLAM](https://bedlam.is.tue.mpg.de/index.html)      
-  - [RenBody / DNA-Rendering](https://magichub.com/datasets/openxd-renbody/)
+  - [RenBody (DNA-Rendering)](https://magichub.com/datasets/openxd-renbody/)
   - [GTA-Human](https://caizhongang.github.io/projects/GTA-Human/)           
   - [SPEC](https://spec.is.tue.mpg.de/index.html)
   - [InstaVariety](https://github.com/akanazawa/human_dynamics/blob/master/doc/insta_variety.md)         
@@ -140,7 +140,6 @@ JOB_NAME=GTA_Human2 / RenBody_HiRes
 torchrun test_scorer.py --num_gpus 1 --exp_name output/scorer_test_${JOB_NAME} --result_path train_scorer_b5_2d_1118_all_loss_20241120_144943 --ckpt_idx 20 --testset ${JOB_NAME}
 
 ```
-- NUM_GPU = 1 is recommended for testing
 <!-- - Logs and results  will be saved to `HMR-Scorer/output/test_{JOB_NAME}_ep{CKPT_ID}_{TEST_DATSET}` -->
 
 ### ADHMR
