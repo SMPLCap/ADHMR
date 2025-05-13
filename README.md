@@ -65,7 +65,7 @@ cd -
   - follow [OSX](https://github.com/IDEA-Research/OSX) in preparing this dataset.
 - follow [OSX](https://github.com/IDEA-Research/OSX) in preparing pretrained ViTPose models. Download the ViTPose pretrained weights for ViT-small and ViT-huge from [here](https://github.com/ViTAE-Transformer/ViTPose).
 - download [SMPL-X](https://smpl-x.is.tue.mpg.de/) and [SMPL](https://smpl.is.tue.mpg.de/) body models.
-- download [HMR-Scorer test datasets](https://entuedu-my.sharepoint.com/:f:/g/personal/wenhao005_e_ntu_edu_sg/Eo9qECft_k1CnDCDrcpHgMIBGo4Y0r9UcqlOOm2_ybBD-w?e=ggZNhx) (DNA-Rendering and GTA-Human) and put them under `dataset/cache_scorer_eval`.
+- download HMR-Scorer test datasets from [OneDrive](https://entuedu-my.sharepoint.com/:f:/g/personal/wenhao005_e_ntu_edu_sg/Eo9qECft_k1CnDCDrcpHgMIBGo4Y0r9UcqlOOm2_ybBD-w?e=EvWTBO) (DNA-Rendering and GTA-Human) and put them under `dataset/cache_scorer_eval`.
 
 The file structure should be like:
 ```
