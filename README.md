@@ -23,6 +23,15 @@
 
 </div>
 
+---
+
+<p align="center">
+  <img src="./assets/method.png" width="98.2%" />
+</p>
+
+---
+
+
 ## 🛠️ Install
 <details>
 <summary>Set up the environment</summary>
